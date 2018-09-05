@@ -1,9 +1,9 @@
 buildscript {
     repositories {
-      maven {
-        url "https://plugins.gradle.org/m2/"
-      }
-      mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
     }
     dependencies {
         classpath('org.springframework.boot:spring-boot-gradle-plugin:2.0.3.RELEASE')
@@ -12,7 +12,14 @@ buildscript {
 // end::build[]
     }
 }
-
+plugins {
+    id 'io.franzbecker.gradle-lombok' version '1.14'
+    id 'java'
+}
+lombok {
+    version = '1.18.2'
+    sha256 = ""
+}
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
@@ -27,7 +34,7 @@ group = 'com.rover.interview.bgou'
 
 bootJar {
     baseName = 'recover-rover'
-    version =  '0.1.0'
+    version = '0.1.0'
 }
 
 // tag::task[]
@@ -47,7 +54,14 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web") 
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-log4j2")
     testCompile("org.springframework.boot:spring-boot-starter-test")
 }
 
+
+configurations {
+    all {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
+}
