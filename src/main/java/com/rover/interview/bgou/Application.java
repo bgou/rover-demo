@@ -1,6 +1,6 @@
 package com.rover.interview.bgou;
 
-import com.opencsv.CSVReaderHeaderAware;
+import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.rover.interview.bgou.model.CsvEntry;
 import lombok.extern.log4j.Log4j2;
@@ -10,10 +10,9 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 @SpringBootApplication
 @RestController
@@ -21,21 +20,29 @@ import java.util.Map;
 public class Application {
 
     @RequestMapping("/")
-    public String home() throws Exception{
-        File file = new ClassPathResource("reviews.csv").getFile();
-        List<CsvEntry> beans = new CsvToBeanBuilder(new FileReader(file))
-                .withType(CsvEntry.class).build().parse();
-        for (CsvEntry entry : beans) {
-            log.info(entry);
+    @SuppressWarnings("unchecked")
+    public String home() {
+        InputStreamReader reader = null;
+        try {
+            InputStream inputStream = new ClassPathResource("reviews.csv").getInputStream();
+            reader = new InputStreamReader(inputStream);
+            CsvToBean<CsvEntry> csvToBean = new CsvToBeanBuilder(reader).withType(CsvEntry.class).build();
+
+            for (CsvEntry entry : csvToBean) {
+                log.info(entry);
+            }
+
+        } catch (IOException ex) {
+            log.error(ex);
+        } finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                }
+            } catch (IOException e) {
+                log.error("Unable to close input reader");
+            }
         }
-//
-//        CSVReaderHeaderAware reader = new CSVReaderHeaderAware(new FileReader(file));
-//        Map<String, String> line;
-//        while((line = reader.readMap()) != null) {
-//            line.forEach((key, val) -> {
-//                log.info("{}: {}", key, val);
-//            });
-//        }
         return "Hello Docker World";
     }
 
