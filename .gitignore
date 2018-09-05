@@ -1,2 +1,6 @@
 *~
 *.swp
+*.iml
+.idea/
+.gradle/
+target/
