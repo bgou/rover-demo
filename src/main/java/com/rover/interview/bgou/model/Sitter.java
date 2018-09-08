@@ -2,8 +2,7 @@ package com.rover.interview.bgou.model;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.extern.java.Log;
-import lombok.extern.log4j.Log4j2;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashSet;
@@ -11,7 +10,6 @@ import java.util.Set;
 
 @Data
 @Builder
-@Log4j2
 public class Sitter {
     private String name;
     private String phone;
@@ -19,7 +17,7 @@ public class Sitter {
     private String image;
     private float score;
 
-    public static float calculateScore(String name) {
+    public static float calculateScore(@NonNull String name) {
         // Sitter Score is 5 times the fraction of the English alphabet comprised by the distinct letters in
         // what we've recovered of the sitter's name.
         //
