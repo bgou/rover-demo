@@ -3,7 +3,9 @@ package com.rover.interview.bgou.service;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.rover.interview.bgou.model.CsvEntry;
+import com.rover.interview.bgou.model.Owner;
 import com.rover.interview.bgou.model.Sitter;
+import com.rover.interview.bgou.tables.OwnerRepository;
 import com.rover.interview.bgou.tables.SitterRepository;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
@@ -25,8 +27,12 @@ public class RestoreDataService {
     @Autowired
     private SitterRepository sitterRepository;
 
+    @Autowired
+    private OwnerRepository ownerRepository;
+
     private static final String REVIEW_FILENAME = "reviews.csv";
     private Set<Sitter> sitterSet = new HashSet<>();
+    private Set<Owner> ownerSet = new HashSet<>();
 
     public void recover() {
         List<CsvEntry> entries = getCsvEntries(REVIEW_FILENAME);
@@ -48,11 +54,26 @@ public class RestoreDataService {
     private void writeToDatabase() {
         sitterRepository.saveAll(sitterSet);
         log.info("Saved {} sitters", sitterSet.size());
+
+        ownerRepository.saveAll(ownerSet);
+        log.info("Saved {} owners", ownerSet.size());
     }
 
     private void processReview(@NonNull CsvEntry reviewEntry) {
         Sitter sitter = parseSitter(reviewEntry);
         sitterSet.add(sitter);
+
+        Owner owner = parseOwner(reviewEntry);
+        ownerSet.add(owner);
+    }
+
+    private Owner parseOwner(@NonNull CsvEntry reviewEntry) {
+        return Owner.builder()
+                .name(reviewEntry.getOwner())
+                .email(reviewEntry.getOwner_email())
+                .phone(reviewEntry.getOwner_phone_number())
+                .image(reviewEntry.getOwner_image())
+                .build();
     }
 
     private Sitter parseSitter(CsvEntry reviewEntry) {

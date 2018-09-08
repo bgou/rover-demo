@@ -17,13 +17,14 @@ import java.util.Set;
 @Data
 @Builder
 @Entity
-@Table(indexes = {
+@Table(name = "sitter",
+        indexes = {
         @Index(name = "email_idx", columnList = "email", unique = true),
         @Index(name = "name_idx", columnList = "name")}
 )
 public class Sitter {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String phone;
