@@ -3,8 +3,10 @@ package com.rover.interview.bgou.service;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.rover.interview.bgou.model.CsvEntry;
+import com.rover.interview.bgou.model.Dog;
 import com.rover.interview.bgou.model.Owner;
 import com.rover.interview.bgou.model.Sitter;
+import com.rover.interview.bgou.tables.DogRepository;
 import com.rover.interview.bgou.tables.OwnerRepository;
 import com.rover.interview.bgou.tables.SitterRepository;
 import lombok.NonNull;
@@ -17,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -30,9 +33,13 @@ public class RestoreDataService {
     @Autowired
     private OwnerRepository ownerRepository;
 
+    @Autowired
+    private DogRepository dogRepository;
+
     private static final String REVIEW_FILENAME = "reviews.csv";
     private Set<Sitter> sitterSet = new HashSet<>();
     private Set<Owner> ownerSet = new HashSet<>();
+    private Set<Dog> dogSet = new HashSet<>();
 
     public void recover() {
         List<CsvEntry> entries = getCsvEntries(REVIEW_FILENAME);
@@ -45,10 +52,9 @@ public class RestoreDataService {
     }
 
     private void retrieve() {
-        sitterRepository.findById(1L)
-                .ifPresent(sitter -> {
-                    log.info("Found {}", sitter);
-                });
+        sitterRepository.findById(1L).ifPresent(sitter -> {
+            log.info("Found {}", sitter);
+        });
     }
 
     private void writeToDatabase() {
@@ -57,6 +63,9 @@ public class RestoreDataService {
 
         ownerRepository.saveAll(ownerSet);
         log.info("Saved {} owners", ownerSet.size());
+
+        dogRepository.saveAll(dogSet);
+        log.info("Saved {} dogs", dogSet.size());
     }
 
     private void processReview(@NonNull CsvEntry reviewEntry) {
@@ -65,15 +74,17 @@ public class RestoreDataService {
 
         Owner owner = parseOwner(reviewEntry);
         ownerSet.add(owner);
+
+        List<Dog> dogs = parseDog(owner, reviewEntry.getDogs());
+        dogSet.addAll(dogs);
     }
 
-    private Owner parseOwner(@NonNull CsvEntry reviewEntry) {
-        return Owner.builder()
-                .name(reviewEntry.getOwner())
-                .email(reviewEntry.getOwner_email())
-                .phone(reviewEntry.getOwner_phone_number())
-                .image(reviewEntry.getOwner_image())
-                .build();
+    private List<Dog> parseDog(Owner owner, List<String> dogs) {
+        List<Dog> result = new LinkedList<>();
+        for (String dogName : dogs) {
+            result.add(Dog.builder().ownerEmail(owner.getEmail()).name(dogName).build());
+        }
+        return result;
     }
 
     private Sitter parseSitter(CsvEntry reviewEntry) {
@@ -85,6 +96,15 @@ public class RestoreDataService {
                               .build();
         sitter.setScore(Sitter.calculateScore(sitter.getName()));
         return sitter;
+    }
+
+    private Owner parseOwner(@NonNull CsvEntry reviewEntry) {
+        return Owner.builder()
+                    .name(reviewEntry.getOwner())
+                    .email(reviewEntry.getOwner_email())
+                    .phone(reviewEntry.getOwner_phone_number())
+                    .image(reviewEntry.getOwner_image())
+                    .build();
     }
 
     @SuppressWarnings("unchecked")
