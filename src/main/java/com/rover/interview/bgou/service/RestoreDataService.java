@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -47,10 +46,8 @@ public class RestoreDataService {
     }
 
     private void writeToDatabase() {
-        for (Sitter sitter : sitterSet) {
-            log.info("Saving sitter to database: {}", sitter);
-            sitterRepository.save(sitter);
-        }
+        sitterRepository.saveAll(sitterSet);
+        log.info("Saved {} sitters", sitterSet.size());
     }
 
     private void processReview(@NonNull CsvEntry reviewEntry) {
