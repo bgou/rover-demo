@@ -9,12 +9,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.Table;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @Builder
 @Entity
+@Table(indexes = {
+        @Index(name = "email_idx", columnList = "email", unique = true),
+        @Index(name = "name_idx", columnList = "name")}
+)
 public class Sitter {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
