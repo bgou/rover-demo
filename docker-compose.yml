@@ -1,0 +1,18 @@
+version: '3'
+services:
+  database:
+    image: "mysql/mysql-server:5.7"
+    environment:
+      - MYSQL_DATABASE=rover
+      - MYSQL_USER=rover
+      - MYSQL_PASSWORD=rover
+      - MYSQL_ROOT_HOST=%
+    ports:
+      - 3306:3306
+#
+#  web:
+#    build: .
+#    ports:
+#     - "5000:5000"
+#  redis:
+#    image: "redis:alpine"
