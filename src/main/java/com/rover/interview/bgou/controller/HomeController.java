@@ -16,6 +16,7 @@ public class HomeController {
     public String index() {
         return "index";
     }
+
     @RequestMapping("/init")
     @ResponseBody
     public String initialize() {
