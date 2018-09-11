@@ -19,8 +19,12 @@ public class RankingService {
     private ReviewRepository reviewRepository;
 
     public void calculateAllSitterRanking() {
-        for (Sitter sitter : sitterRepository.findAll()) {
-            calculateSitterRanking(sitter);
+        try {
+            for (Sitter sitter : sitterRepository.findAll()) {
+                calculateSitterRanking(sitter);
+            }
+        } catch (Exception ex) {
+            log.error("Error during calculateAllSitterRanking", ex);
         }
     }
 

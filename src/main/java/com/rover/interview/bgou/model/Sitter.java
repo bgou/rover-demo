@@ -1,7 +1,9 @@
 package com.rover.interview.bgou.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,6 +17,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "sitter",
