@@ -53,12 +53,18 @@ repositories {
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
+ext {
+    queryDslVersion = '4.2.1'
+}
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web")
     compile("org.springframework.boot:spring-boot-starter-log4j2")
     // JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'mysql:mysql-connector-java'
+    compile "com.querydsl:querydsl-apt:$queryDslVersion"
+    compile "com.querydsl:querydsl-sql:$queryDslVersion"
 
     compile('com.opencsv:opencsv:4.2')
     testCompile("org.springframework.boot:spring-boot-starter-test")

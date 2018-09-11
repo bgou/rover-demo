@@ -42,6 +42,9 @@ public class RestoreDataService {
     @Autowired
     private ReviewRepository reviewRepository;
 
+    @Autowired
+    private RankingService rankingService;
+
     private static final String REVIEW_FILENAME = "reviews.csv";
     private Set<Sitter> sitterSet = new HashSet<>();
     private Set<Owner> ownerSet = new HashSet<>();
@@ -54,14 +57,7 @@ public class RestoreDataService {
             processReview(reviewEntry);
         }
         writeToDatabase();
-
-        retrieve();
-    }
-
-    private void retrieve() {
-        sitterRepository.findById(1L).ifPresent(sitter -> {
-            log.info("Found {}", sitter);
-        });
+        rankingService.calculateSitterRating();
     }
 
     private void writeToDatabase() {

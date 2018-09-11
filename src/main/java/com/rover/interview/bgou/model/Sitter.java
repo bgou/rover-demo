@@ -31,6 +31,7 @@ public class Sitter {
     private String email;
     private String image;
     private float score;
+    private float rating;
 
     public static float calculateScore(@NonNull String name) {
         // Sitter Score is 5 times the fraction of the English alphabet comprised by the distinct letters in
