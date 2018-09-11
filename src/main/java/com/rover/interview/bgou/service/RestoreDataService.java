@@ -5,12 +5,15 @@ import com.opencsv.bean.CsvToBeanBuilder;
 import com.rover.interview.bgou.model.CsvEntry;
 import com.rover.interview.bgou.model.Dog;
 import com.rover.interview.bgou.model.Owner;
+import com.rover.interview.bgou.model.Review;
 import com.rover.interview.bgou.model.Sitter;
 import com.rover.interview.bgou.tables.DogRepository;
 import com.rover.interview.bgou.tables.OwnerRepository;
+import com.rover.interview.bgou.tables.ReviewRepository;
 import com.rover.interview.bgou.tables.SitterRepository;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
@@ -36,10 +39,14 @@ public class RestoreDataService {
     @Autowired
     private DogRepository dogRepository;
 
+    @Autowired
+    private ReviewRepository reviewRepository;
+
     private static final String REVIEW_FILENAME = "reviews.csv";
     private Set<Sitter> sitterSet = new HashSet<>();
     private Set<Owner> ownerSet = new HashSet<>();
     private Set<Dog> dogSet = new HashSet<>();
+    private Set<Review> reviewSet = new HashSet<>();
 
     public void recover() {
         List<CsvEntry> entries = getCsvEntries(REVIEW_FILENAME);
@@ -66,6 +73,9 @@ public class RestoreDataService {
 
         dogRepository.saveAll(dogSet);
         log.info("Saved {} dogs", dogSet.size());
+
+        reviewRepository.saveAll(reviewSet);
+        log.info("Saved {} reviews", reviewSet.size());
     }
 
     private void processReview(@NonNull CsvEntry reviewEntry) {
@@ -77,6 +87,21 @@ public class RestoreDataService {
 
         List<Dog> dogs = parseDog(owner, reviewEntry.getDogs());
         dogSet.addAll(dogs);
+
+        Review review = parseReview(reviewEntry);
+        reviewSet.add(review);
+    }
+
+    private Review parseReview(CsvEntry reviewEntry) {
+        return Review.builder()
+                     .rating(reviewEntry.getRating())
+                     .dogs(StringUtils.join(reviewEntry.getDogs(), ','))
+                     .ownerEmail(reviewEntry.getOwner_email())
+                     .sitterEmail(reviewEntry.getSitter_email())
+                     .text(reviewEntry.getText())
+                     .start_date(reviewEntry.getStart_date())
+                     .end_date(reviewEntry.getEnd_date())
+                     .build();
     }
 
     private List<Dog> parseDog(Owner owner, List<String> dogs) {
