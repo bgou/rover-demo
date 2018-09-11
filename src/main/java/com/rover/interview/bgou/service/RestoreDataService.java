@@ -57,7 +57,7 @@ public class RestoreDataService {
             processReview(reviewEntry);
         }
         writeToDatabase();
-        rankingService.calculateSitterRating();
+        rankingService.calculateAllSitterRanking();
     }
 
     private void writeToDatabase() {
