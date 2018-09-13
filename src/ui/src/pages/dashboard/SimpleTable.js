@@ -50,7 +50,7 @@ class SimpleTable extends React.Component {
         <Grid container className={classes.root} spacing={16}>
           {this.props.data.map(n => {
             return (
-              <Grid item key={n.email} xs={12} sm={6} md={3} lg={2}>
+              <Grid item key={n.email} xs={12} sm={6} md={4} lg={2}>
                 <Card className={classes.card}>
                   <CardActionArea>
                     <CardContent>

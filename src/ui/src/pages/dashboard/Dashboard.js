@@ -1,21 +1,21 @@
-import AppBar from '@material-ui/core/AppBar';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import IconButton from '@material-ui/core/IconButton';
-import List from '@material-ui/core/List';
-import { withStyles } from '@material-ui/core/styles';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import MenuIcon from '@material-ui/icons/Menu';
+import AppBar from "@material-ui/core/AppBar";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import Divider from "@material-ui/core/Divider";
+import Drawer from "@material-ui/core/Drawer";
+import IconButton from "@material-ui/core/IconButton";
+import List from "@material-ui/core/List";
+import { withStyles } from "@material-ui/core/styles";
+import Toolbar from "@material-ui/core/Toolbar";
+import Typography from "@material-ui/core/Typography";
+import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
+import MenuIcon from "@material-ui/icons/Menu";
 import axios from "axios";
-import classNames from 'classnames';
-import PropTypes from 'prop-types';
-import React from 'react';
-import CustomPagination from './CustomPagination';
-import { mainListItems } from './listItems';
-import SimpleTable from './SimpleTable';
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import React from "react";
+import CustomPagination from "./CustomPagination";
+import { mainListItems } from "./listItems";
+import SimpleTable from "./SimpleTable";
 
 const drawerWidth = 240;
 
@@ -85,9 +85,6 @@ const styles = theme => ({
     height: "100vh",
     overflow: "auto"
   },
-  chartContainer: {
-    marginLeft: -22
-  },
   tableContainer: {
     height: 320
   },
@@ -108,17 +105,31 @@ class Dashboard extends React.Component {
   state = {
     open: false,
     page: 0,
-    size: 18,
+    rowsPerPage: 25,
+    totalPages: 0,
+    count: 0,
     data: []
   };
 
   async componentDidMount() {
     const response = await client.get(
-      `/sitters?size=${this.state.size}&page=${this.state.page}&sort=rank,desc`
+      `/sitters?size=${this.state.rowsPerPage}&page=${
+        this.state.page
+      }&sort=rank,desc`
     );
-    console.log(response.data._embedded.sitters);
-    this.setState({ data: response.data._embedded.sitters });
-    // data = response.data._embedded.sitters;
+    // console.log(response.data._embedded.sitters);
+    const {
+      totalElements: count,
+      totalPages,
+      number: page
+    } = response.data.page;
+
+    this.setState({
+      data: response.data._embedded.sitters,
+      count,
+      totalPages,
+      page
+    });
   }
 
   handleDrawerOpen = () => {
@@ -127,6 +138,14 @@ class Dashboard extends React.Component {
 
   handleDrawerClose = () => {
     this.setState({ open: false });
+  };
+
+  handleChangePage = (event, page) => {
+    this.setState({ page });
+  };
+
+  handleChangeRowsPerPage = event => {
+    this.setState({ rowsPerPage: event.target.value });
   };
 
   render() {
@@ -197,10 +216,16 @@ class Dashboard extends React.Component {
               Sitters
             </Typography>
             <div className={classes.customPagination}>
-              <CustomPagination />
+              <CustomPagination
+                count={this.state.count}
+                rowsPerPage={this.state.rowsPerPage}
+                page={this.state.page}
+                handleChangePage={this.handleChangePage}
+                handleChangeRowsPerPage={this.handleChangeRowsPerPage}
+              />
             </div>
             <div className={classes.tableContainer}>
-              <SimpleTable data={this.state.data}/>
+              <SimpleTable data={this.state.data} />
             </div>
           </main>
         </div>
@@ -210,7 +235,7 @@ class Dashboard extends React.Component {
 }
 
 Dashboard.propTypes = {
-  classes: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(Dashboard);
