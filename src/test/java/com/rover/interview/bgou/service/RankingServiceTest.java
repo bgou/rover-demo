@@ -39,7 +39,7 @@ public class RankingServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        testSitter = Sitter.builder().name("Laura B.").score(2.50f).build();
+        testSitter = Sitter.builder().name("Laura B.").email("email").score(2.50f).build();
     }
 
     @Test
@@ -84,10 +84,10 @@ public class RankingServiceTest {
         long randomReviewCount = r.nextInt(20);
         if (randomReviewCount == 0) randomReviewCount++;
         long randomReviewRatingSum = randomReviewCount + 1;
-        testSitter = Sitter.builder().build();
+        testSitter = Sitter.builder().email("any@rover.com").build();
         try {
-            when(reviewRepository.countReviewsBySitterEmail(anyString())).thenReturn(15L);
-            when(reviewRepository.sumRatingsBySitterEmail(anyString())).thenReturn(randomReviewRatingSum);
+            when(reviewRepository.countReviewsBySitterEmail(testSitter.getEmail())).thenReturn(randomReviewCount);
+            when(reviewRepository.sumRatingsBySitterEmail(testSitter.getEmail())).thenReturn(randomReviewRatingSum);
 
             testRankingService.calculateSitterRanking(testSitter);
 
@@ -100,21 +100,18 @@ public class RankingServiceTest {
 
     @Test
     public void verify_calculate_rating() throws Exception {
-
-        List<Review> reviews = new LinkedList<>();
         float[] expectedResults = {2.50f, 2.75f, 3.00f, 3.25f, 3.50f, 3.75f, 4.00f, 4.25f, 4.50f, 4.75f, 5.00f, 5.00f,
                 5.00f};
 
-        long reviewSum = 0;
-        for (int i = 0; i < 13; i++) {
-//            when(reviewRepository.countReviewsBySitterEmail(anyString())).thenReturn(reviews.size());
-            when(reviewRepository.sumRatingsBySitterEmail(anyString())).thenReturn(reviewSum);
+        long reviewSum = 5;
+        for (int i = 1; i < 13; i++) {
+            when(reviewRepository.countReviewsBySitterEmail(eq(testSitter.getEmail()))).thenReturn((long)i);
+            when(reviewRepository.sumRatingsBySitterEmail(eq(testSitter.getEmail()))).thenReturn(reviewSum);
 
             testRankingService.calculateSitterRanking(testSitter);
             float expResult = expectedResults[i];
-            assertThat(testSitter.getRating(), Matchers.is(expResult));
+            assertThat(testSitter.getRank(), Matchers.is(expResult));
 
-            reviews.add(Review.builder().rating(5).build());
             reviewSum += 5;
         }
     }
