@@ -1,20 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import {withStyles} from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
+import List from '@material-ui/core/List';
+import { withStyles } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import {mainListItems} from './listItems';
+import MenuIcon from '@material-ui/icons/Menu';
+import axios from "axios";
+import classNames from 'classnames';
+import PropTypes from 'prop-types';
+import React from 'react';
+import CustomPagination from './CustomPagination';
+import { mainListItems } from './listItems';
 import SimpleTable from './SimpleTable';
-import CustomPagination from './CustomPagination'
 
 const drawerWidth = 240;
 
@@ -92,14 +93,33 @@ const styles = theme => ({
   },
   customPagination: {
     marginTop: theme.spacing.unit * 2,
-    marginBottom: theme.spacing.unit * 2
+    marginBottom: theme.spacing.unit * 2,
+    marginRight: theme.spacing.unit * 2
   }
+});
+
+const client = axios.create({
+  baseURL: "http://localhost:8080/api/",
+  timeout: 2000,
+  headers: { "Content-Type": "application/json" }
 });
 
 class Dashboard extends React.Component {
   state = {
-    open: true,
+    open: false,
+    page: 0,
+    size: 18,
+    data: []
   };
+
+  async componentDidMount() {
+    const response = await client.get(
+      `/sitters?size=${this.state.size}&page=${this.state.page}&sort=rank,desc`
+    );
+    console.log(response.data._embedded.sitters);
+    this.setState({ data: response.data._embedded.sitters });
+    // data = response.data._embedded.sitters;
+  }
 
   handleDrawerOpen = () => {
     this.setState({ open: true });
@@ -112,23 +132,55 @@ class Dashboard extends React.Component {
   render() {
     const { classes } = this.props;
 
-    return <React.Fragment>
+    return (
+      <React.Fragment>
         <CssBaseline />
         <div className={classes.root}>
           {/*Top Row*/}
-          <AppBar position="absolute" className={classNames(classes.appBar, this.state.open && classes.appBarShift)}>
-            <Toolbar disableGutters={!this.state.open} className={classes.toolbar}>
-              <IconButton color="inherit" aria-label="Open drawer" onClick={this.handleDrawerOpen} className={classNames(classes.menuButton, this.state.open && classes.menuButtonHidden)}>
+          <AppBar
+            position="absolute"
+            className={classNames(
+              classes.appBar,
+              this.state.open && classes.appBarShift
+            )}
+          >
+            <Toolbar
+              disableGutters={!this.state.open}
+              className={classes.toolbar}
+            >
+              <IconButton
+                color="inherit"
+                aria-label="Open drawer"
+                onClick={this.handleDrawerOpen}
+                className={classNames(
+                  classes.menuButton,
+                  this.state.open && classes.menuButtonHidden
+                )}
+              >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="title" color="inherit" noWrap className={classes.title}>
+              <Typography
+                variant="title"
+                color="inherit"
+                noWrap
+                className={classes.title}
+              >
                 Rover Dashboard
               </Typography>
             </Toolbar>
           </AppBar>
 
           {/*Left Column*/}
-          <Drawer variant="permanent" classes={{ paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose) }} open={this.state.open}>
+          <Drawer
+            variant="permanent"
+            classes={{
+              paper: classNames(
+                classes.drawerPaper,
+                !this.state.open && classes.drawerPaperClose
+              )
+            }}
+            open={this.state.open}
+          >
             <div className={classes.toolbarIcon}>
               <IconButton onClick={this.handleDrawerClose}>
                 <ChevronLeftIcon />
@@ -148,11 +200,12 @@ class Dashboard extends React.Component {
               <CustomPagination />
             </div>
             <div className={classes.tableContainer}>
-              <SimpleTable />
+              <SimpleTable data={this.state.data}/>
             </div>
           </main>
         </div>
-      </React.Fragment>;
+      </React.Fragment>
+    );
   }
 }
 

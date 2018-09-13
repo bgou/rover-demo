@@ -1,23 +1,15 @@
-import React from "react";
-import PropTypes from "prop-types";
-import { withStyles } from "@material-ui/core/styles";
-import classNames from "classnames";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import axios from "axios";
 import Avatar from "@material-ui/core/Avatar";
+import Button from "@material-ui/core/Button";
 import Card from "@material-ui/core/Card";
 import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
-import CardMedia from "@material-ui/core/CardMedia";
-import Button from "@material-ui/core/Button";
 import Grid from "@material-ui/core/Grid";
+import { withStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import classNames from "classnames";
+import PropTypes from "prop-types";
+import React from "react";
 
 const styles = {
   root: {
@@ -43,27 +35,8 @@ const styles = {
   }
 };
 
-const client = axios.create({
-  baseURL: "http://localhost:8080/api/",
-  timeout: 2000,
-  headers: { "Content-Type": "application/json" }
-});
-
 class SimpleTable extends React.Component {
-  state = {
-    page: 0,
-    size: 18,
-    data: []
-  };
-
-  async componentDidMount() {
-    const response = await client.get(
-      `/sitters?size=${this.state.size}&page=${this.state.page}&sort=rank,desc`
-    );
-    console.log(response.data._embedded.sitters);
-    this.setState({ data: response.data._embedded.sitters });
-    // data = response.data._embedded.sitters;
-  }
+  state = {};
 
   round(val) {
     return Number(val).toFixed(1);
@@ -75,7 +48,7 @@ class SimpleTable extends React.Component {
     return (
       <React.Fragment>
         <Grid container className={classes.root} spacing={16}>
-          {this.state.data.map(n => {
+          {this.props.data.map(n => {
             return (
               <Grid item key={n.email} xs={12} sm={6} md={3} lg={2}>
                 <Card className={classes.card}>
@@ -126,7 +99,8 @@ class SimpleTable extends React.Component {
 }
 
 SimpleTable.propTypes = {
-  classes: PropTypes.object.isRequired
+  classes: PropTypes.object.isRequired,
+  data: PropTypes.array.isRequired
 };
 
 export default withStyles(styles)(SimpleTable);
