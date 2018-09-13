@@ -111,18 +111,16 @@ class Dashboard extends React.Component {
     data: []
   };
 
-  async componentDidMount() {
+  async refreshData() {
+    let { page, rowsPerPage, totalPages, count } = this.state;
     const response = await client.get(
-      `/sitters?size=${this.state.rowsPerPage}&page=${
-        this.state.page
-      }&sort=rank,desc`
+      `/sitters?size=${rowsPerPage}&page=${page}&sort=rank,desc`
     );
-    // console.log(response.data._embedded.sitters);
-    const {
+    ({
       totalElements: count,
       totalPages,
       number: page
-    } = response.data.page;
+    } = response.data.page);
 
     this.setState({
       data: response.data._embedded.sitters,
@@ -130,6 +128,10 @@ class Dashboard extends React.Component {
       totalPages,
       page
     });
+  };
+
+  componentDidMount() {
+    this.refreshData();
   }
 
   handleDrawerOpen = () => {
@@ -141,11 +143,15 @@ class Dashboard extends React.Component {
   };
 
   handleChangePage = (event, page) => {
-    this.setState({ page });
+    this.setState({ page }, () => {
+      this.refreshData();
+    });
   };
 
   handleChangeRowsPerPage = event => {
-    this.setState({ rowsPerPage: event.target.value });
+    this.setState({ rowsPerPage: event.target.value }, () => {
+      this.refreshData();
+    });
   };
 
   render() {
