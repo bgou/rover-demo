@@ -33,12 +33,15 @@ public class RankingService {
 
         // Ratings Score is the average of their stay ratings.
         long reviewCount = reviewRepository.countReviewsBySitterEmail(sitterEmail);
-        long totalRating = reviewRepository.sumRatingsBySitterEmail(sitterEmail);
-        log.info("{} has {} reviews, total rating: {}", sitterEmail, reviewCount, totalRating);
+        log.debug("Hello");
+        if (reviewCount > 0) {
+            long totalRating = reviewRepository.sumRatingsBySitterEmail(sitterEmail);
+            log.info("{} has {} reviews, total rating: {}", sitterEmail, reviewCount, totalRating);
 
-        float rating = (float) totalRating / (float) reviewCount;
-        log.info("Updating sitter {}'s rating to {}", sitterEmail, rating);
-        sitter.setRating(rating);
+            float rating = (float) totalRating / (float) reviewCount;
+            log.info("Updating sitter {}'s rating to {}", sitterEmail, rating);
+            sitter.setRating(rating);
+        }
 
         // The Overall Sitter Rank is a weighted average of the Sitter Score and Ratings Score,
         // weighted by the number of stays.
