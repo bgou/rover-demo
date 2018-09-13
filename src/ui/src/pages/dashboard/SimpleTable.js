@@ -52,7 +52,7 @@ const client = axios.create({
 class SimpleTable extends React.Component {
   state = {
     page: 0,
-    size: 20,
+    size: 18,
     data: []
   };
 
@@ -73,77 +73,55 @@ class SimpleTable extends React.Component {
     const { classes } = this.props;
 
     return (
-      <Grid container className={classes.root} spacing={24}>
-        {this.state.data.map(n => {
-          return (
-            <Grid item key={n.email} xs={12} sm={6} md={3}>
-              <Card className={classes.card}>
-                <CardActionArea>
-                  <CardContent>
-                    <Grid container>
-                      <Grid item>
-                        <Avatar
-                          alt={n.name}
-                          src={n.image}
-                          className={classNames(
-                            classes.avatar,
-                            classes.bigAvatar
-                          )}
-                        />
+      <React.Fragment>
+        <Grid container className={classes.root} spacing={16}>
+          {this.state.data.map(n => {
+            return (
+              <Grid item key={n.email} xs={12} sm={6} md={3} lg={2}>
+                <Card className={classes.card}>
+                  <CardActionArea>
+                    <CardContent>
+                      <Grid container>
+                        <Grid item>
+                          <Avatar
+                            alt={n.name}
+                            src={n.image}
+                            className={classNames(
+                              classes.avatar,
+                              classes.bigAvatar
+                            )}
+                          />
+                        </Grid>
+                        <Grid item>
+                          <Typography
+                            gutterBottom
+                            variant="headline"
+                            component="h2"
+                          >
+                            {n.name}
+                          </Typography>
+                          <Typography component="em">
+                            Rating: {this.round(n.rating)}
+                          </Typography>
+                        </Grid>
                       </Grid>
-                      <Grid item>
-                        <Typography
-                          gutterBottom
-                          variant="headline"
-                          component="h2" >
-                          {n.name}
-                        </Typography>
-                        <Typography component="em">
-                          Rating: {this.round(n.rating)}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </CardActionArea>
-                <CardActions>
-                  <Button size="small" color="primary">
-                    Share
-                  </Button>
-                  <Button size="small" color="primary">
-                    Contact Sitter
-                  </Button>
-                </CardActions>
-              </Card>
-            </Grid>
-          );
-        })}
-      </Grid>
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions>
+                    <Button size="small" color="primary">
+                      Share
+                    </Button>
+                    <Button size="small" color="primary">
+                      Contact Sitter
+                    </Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </React.Fragment>
     );
-    // <Paper className={classes.root}>
-    //   <Table className={classes.table}>
-    //     <TableHead>
-    //       <TableRow>
-    //         <TableCell>Name</TableCell>
-    //         <TableCell>Photo</TableCell>
-    //         <TableCell numeric>Rating</TableCell>
-    //       </TableRow>
-    //     </TableHead>
-    //     <TableBody>
-    //       {this.state.data.map(n => {
-    //         return (
-    //           <TableRow key={n.email}>
-    //             <TableCell component="th"
-    //                        scope="row">
-    //               {n.name}
-    //             </TableCell>
-    //             <TableCell>{n.image}</TableCell>
-    //             <TableCell numeric>{this.round(n.rating)}</TableCell>
-    //           </TableRow>
-    //         );
-    //       })}
-    //     </TableBody>
-    //   </Table>
-    // </Paper>
   }
 }
 
