@@ -33,7 +33,6 @@ public class RankingService {
 
         // Ratings Score is the average of their stay ratings.
         long reviewCount = reviewRepository.countReviewsBySitterEmail(sitterEmail);
-        log.debug("Hello");
         if (reviewCount > 0) {
             long totalRating = reviewRepository.sumRatingsBySitterEmail(sitterEmail);
             log.info("{} has {} reviews, total rating: {}", sitterEmail, reviewCount, totalRating);

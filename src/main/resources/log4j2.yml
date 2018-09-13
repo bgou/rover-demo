@@ -11,7 +11,7 @@ Configutation:
       name: Console_Appender
       target: SYSTEM_OUT
   Loggers:
-      Root:
-        level: debug
-        AppenderRef:
-          - ref: Console_Appender
+    Root:
+      level: debug
+      AppenderRef:
+        - ref: Console_Appender
