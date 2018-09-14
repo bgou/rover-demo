@@ -11,6 +11,8 @@ import com.rover.interview.bgou.tables.DogRepository;
 import com.rover.interview.bgou.tables.OwnerRepository;
 import com.rover.interview.bgou.tables.ReviewRepository;
 import com.rover.interview.bgou.tables.SitterRepository;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
@@ -46,9 +48,14 @@ public class RestoreDataService {
     private RankingService rankingService;
 
     private static final String REVIEW_FILENAME = "reviews.csv";
+
+    @Getter(AccessLevel.MODULE)
     private Set<Sitter> sitterSet = new HashSet<>();
+    @Getter(AccessLevel.MODULE)
     private Set<Owner> ownerSet = new HashSet<>();
+    @Getter(AccessLevel.MODULE)
     private Set<Dog> dogSet = new HashSet<>();
+    @Getter(AccessLevel.MODULE)
     private Set<Review> reviewSet = new HashSet<>();
 
     public void recover() {
@@ -128,8 +135,15 @@ public class RestoreDataService {
                     .build();
     }
 
+    /**
+     * Opens the defined file (must be on the resource path, and parse lines to list
+     * Package private for tests to invoke
+     *
+     * @param filename file that's on the class resource path
+     * @return List of CsvEntry
+     */
     @SuppressWarnings("unchecked")
-    public List<CsvEntry> getCsvEntries(String filename) {
+    List<CsvEntry> getCsvEntries(String filename) {
         InputStreamReader reader = null;
         try {
             InputStream inputStream = new ClassPathResource(filename).getInputStream();
