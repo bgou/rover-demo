@@ -6,4 +6,5 @@
 target/
 out/
 node_modules/
+build/
 

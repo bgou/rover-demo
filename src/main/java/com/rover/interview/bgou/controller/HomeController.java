@@ -12,11 +12,6 @@ public class HomeController {
     @Autowired
     RestoreDataService restoreDataService;
 
-    @RequestMapping("/")
-    public String index() {
-        return "index";
-    }
-
     @RequestMapping("/init")
     @ResponseBody
     public String initialize() {
