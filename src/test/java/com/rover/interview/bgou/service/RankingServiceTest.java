@@ -100,11 +100,10 @@ public class RankingServiceTest {
 
     @Test
     public void verify_calculate_rating() throws Exception {
-        float[] expectedResults = {2.50f, 2.75f, 3.00f, 3.25f, 3.50f, 3.75f, 4.00f, 4.25f, 4.50f, 4.75f, 5.00f, 5.00f,
-                5.00f};
+        float[] expectedResults = {2.50f, 2.75f, 3.00f, 3.25f, 3.50f, 3.75f, 4.00f, 4.25f, 4.50f, 4.75f, 5.00f, 5.00f};
 
         long reviewSum = 5;
-        for (int i = 1; i < 13; i++) {
+        for (int i = 1; i < 12; i++) {
             when(reviewRepository.countReviewsBySitterEmail(eq(testSitter.getEmail()))).thenReturn((long)i);
             when(reviewRepository.sumRatingsBySitterEmail(eq(testSitter.getEmail()))).thenReturn(reviewSum);
 
